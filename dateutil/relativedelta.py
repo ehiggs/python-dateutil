@@ -412,6 +412,108 @@ Here is the behavior of operations with relativedelta:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def __cmp__(self, other):
+        if self == other:
+            return 0
+
+        return -1 if (self < other) else 1
+
+    def __lt__(self, other):
+        if self.years != other.years:
+            return self.years < other.years
+
+        if self.months != other.months:
+            return self.months < other.months
+
+        if self.days != other.days:
+            return self.days < other.days
+
+        if self.hours != other.hours:
+            return self.hours < other.hours
+
+        if self.minutes != other.minutes:
+            return self.minutes < other.minutes
+
+        if self.seconds != other.seconds:
+            return self.seconds < other.seconds
+
+        if self.microseconds != other.microseconds:
+            return self.microseconds < other.microseconds
+
+        return False
+
+    def __gt__(self, other):
+        if self.years != other.years:
+            return self.years > other.years
+
+        if self.months != other.months:
+            return self.months > other.months
+
+        if self.days != other.days:
+            return self.days > other.days
+
+        if self.hours != other.hours:
+            return self.hours > other.hours
+
+        if self.minutes != other.minutes:
+            return self.minutes > other.minutes
+
+        if self.seconds != other.seconds:
+            return self.seconds > other.seconds
+
+        if self.microseconds != other.microseconds:
+            return self.microseconds > other.microseconds
+
+        return False
+
+    def __ge__(self, other):
+        if self.years != other.years:
+            return self.years >= other.years
+
+        if self.months != other.months:
+            return self.months >= other.months
+
+        if self.days != other.days:
+            return self.days >= other.days
+
+        if self.hours != other.hours:
+            return self.hours >= other.hours
+
+        if self.minutes != other.minutes:
+            return self.minutes >= other.minutes
+
+        if self.seconds != other.seconds:
+            return self.seconds >= other.seconds
+
+        if self.microseconds != other.microseconds:
+            return self.microseconds >= other.microseconds
+
+        return True
+
+    def __le__(self, other):
+        if self.years != other.years:
+            return self.years <= other.years
+
+        if self.months != other.months:
+            return self.months <= other.months
+
+        if self.days != other.days:
+            return self.days <= other.days
+
+        if self.hours != other.hours:
+            return self.hours <= other.hours
+
+        if self.minutes != other.minutes:
+            return self.minutes <= other.minutes
+
+        if self.seconds != other.seconds:
+            return self.seconds <= other.seconds
+
+        if self.microseconds != other.microseconds:
+            return self.microseconds <= other.microseconds
+
+        return True
+
     def __div__(self, other):
         return self.__mul__(1/float(other))
 
