@@ -154,6 +154,63 @@ class RelativeDeltaTest(unittest.TestCase):
         self.assertEqual(self.today+relativedelta(yearday=261),
                          date(2003, 9, 18))
 
+    def testEqual(self):
+        self.assertEqual(relativedelta(years=1), relativedelta(years=1))
+        self.assertEqual(relativedelta(months=1), relativedelta(months=1))
+        self.assertEqual(relativedelta(days=1), relativedelta(days=1))
+        self.assertEqual(relativedelta(hours=1), relativedelta(hours=1))
+        self.assertEqual(relativedelta(minutes=1), relativedelta(minutes=1))
+        self.assertEqual(relativedelta(seconds=1), relativedelta(seconds=1))
+        self.assertEqual(relativedelta(microseconds=1), relativedelta(microseconds=1))
+
+    def testNotEqual(self):
+        self.assertNotEqual(relativedelta(years=2), relativedelta(years=1))
+        self.assertNotEqual(relativedelta(months=2), relativedelta(months=1))
+        self.assertNotEqual(relativedelta(days=2), relativedelta(days=1))
+        self.assertNotEqual(relativedelta(hours=2), relativedelta(hours=1))
+        self.assertNotEqual(relativedelta(minutes=2), relativedelta(minutes=1))
+        self.assertNotEqual(relativedelta(seconds=2), relativedelta(seconds=1))
+        self.assertNotEqual(relativedelta(microseconds=2), relativedelta(microseconds=1))
+
+
+    def testCompare(self):
+        self.assertTrue(relativedelta(days=1) > relativedelta(days=0))
+        self.assertTrue(relativedelta(days=2) > relativedelta(days=1))
+        self.assertTrue(relativedelta(days=1) > relativedelta(days=-1))
+        self.assertTrue(relativedelta(days=0) > relativedelta(days=-1))
+        self.assertTrue(relativedelta(days=1) > relativedelta(seconds=-24*60*60))
+        self.assertTrue(relativedelta(seconds=2*24*60*60) > relativedelta(days=1))
+        self.assertTrue(relativedelta(years=1) > relativedelta(months=11))
+        self.assertTrue(relativedelta(months=13) > relativedelta(years=1))
+
+        self.assertTrue(relativedelta(days=0) < relativedelta(days=1))
+        self.assertTrue(relativedelta(days=1) < relativedelta(days=2))
+        self.assertTrue(relativedelta(days=-1) < relativedelta(days=1))
+        self.assertTrue(relativedelta(days=-1) < relativedelta(days=0))
+        self.assertTrue(relativedelta(days=1) <= relativedelta(seconds=2*86400))
+
+        self.assertTrue(relativedelta(days=1) >= relativedelta(days=0))
+        self.assertTrue(relativedelta(days=2) >= relativedelta(days=1))
+        self.assertTrue(relativedelta(days=1) >= relativedelta(days=-1))
+        self.assertTrue(relativedelta(days=0) >= relativedelta(days=-1))
+        self.assertTrue(relativedelta(days=0) >= relativedelta(days=0))
+        self.assertTrue(relativedelta(days=2) >= relativedelta(seconds=1))
+        self.assertTrue(relativedelta(days=2) <= relativedelta(seconds=2*86400))
+
+        self.assertTrue(relativedelta(days=0) <= relativedelta(days=0))
+        self.assertTrue(relativedelta(days=1) <= relativedelta(days=2))
+        self.assertTrue(relativedelta(days=-1) <= relativedelta(days=1))
+        self.assertTrue(relativedelta(days=-1) <= relativedelta(days=0))
+        self.assertTrue(relativedelta(days=0) <= relativedelta(days=0))
+        self.assertTrue(relativedelta(days=0) <= relativedelta(days=0))
+        self.assertTrue(relativedelta(days=-1) <= relativedelta(days=-1))
+
+    def testCannotCompare(self):
+        self.assertRaises(ValueError, relativedelta(days=1).__cmp__, relativedelta(months=1))
+        self.assertRaises(ValueError, relativedelta(days=1).__cmp__, relativedelta(years=1))
+        self.assertRaises(ValueError, relativedelta(months=1).__cmp__, relativedelta(days=1))
+        self.assertRaises(ValueError, relativedelta(years=1).__cmp__, relativedelta(days=1))
+
 class RRuleTest(unittest.TestCase):
 
     def testYearly(self):
