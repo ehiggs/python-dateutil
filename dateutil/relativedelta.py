@@ -413,107 +413,45 @@ Here is the behavior of operations with relativedelta:
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    def _has_relative_fields(self):
+        return self.years != 0 \
+            or self.months != 0
+
+    def _has_nonrelative_fields(self):
+        return self.days != 0 \
+            or self.hours != 0 \
+            or self.minutes != 0 \
+            or self.seconds != 0 \
+            or self.microseconds != 0
+
+    def _as_months(self):
+        if self._has_nonrelative_fields():
+            raise ValueError, 'Cannot convert nonrelative fields to ms'
+        return 12 * self.years + self.months
+
+    def _as_ms(self):
+        if self._has_relative_fields():
+            raise ValueError, 'Cannot convert relative fields to ms'
+        return 24*60 * 60 * 1000 * self.days \
+                + 60 * 60 * 1000 * self.hours \
+                + 60 * 1000 * self.minutes \
+                + 1000 * self.seconds \
+                + self.microseconds
+
     def __cmp__(self, other):
         if self == other:
             return 0
 
-        return -1 if (self < other) else 1
+        if (self._has_relative_fields() and other._has_nonrelative_fields()) \
+            or (self._has_nonrelative_fields() and other._has_relative_fields()):
+            raise ValueError, 'Cannot compare relativedeltas relative and non relative fields'
 
-    def __lt__(self, other):
-        if self.years != other.years:
-            return self.years < other.years
+        if self._has_relative_fields():
+            return self._as_months() - other._as_months()
+        else:
+            return self._as_ms() - other._as_ms()
 
-        if self.months != other.months:
-            return self.months < other.months
-
-        if self.days != other.days:
-            return self.days < other.days
-
-        if self.hours != other.hours:
-            return self.hours < other.hours
-
-        if self.minutes != other.minutes:
-            return self.minutes < other.minutes
-
-        if self.seconds != other.seconds:
-            return self.seconds < other.seconds
-
-        if self.microseconds != other.microseconds:
-            return self.microseconds < other.microseconds
-
-        return False
-
-    def __gt__(self, other):
-        if self.years != other.years:
-            return self.years > other.years
-
-        if self.months != other.months:
-            return self.months > other.months
-
-        if self.days != other.days:
-            return self.days > other.days
-
-        if self.hours != other.hours:
-            return self.hours > other.hours
-
-        if self.minutes != other.minutes:
-            return self.minutes > other.minutes
-
-        if self.seconds != other.seconds:
-            return self.seconds > other.seconds
-
-        if self.microseconds != other.microseconds:
-            return self.microseconds > other.microseconds
-
-        return False
-
-    def __ge__(self, other):
-        if self.years != other.years:
-            return self.years >= other.years
-
-        if self.months != other.months:
-            return self.months >= other.months
-
-        if self.days != other.days:
-            return self.days >= other.days
-
-        if self.hours != other.hours:
-            return self.hours >= other.hours
-
-        if self.minutes != other.minutes:
-            return self.minutes >= other.minutes
-
-        if self.seconds != other.seconds:
-            return self.seconds >= other.seconds
-
-        if self.microseconds != other.microseconds:
-            return self.microseconds >= other.microseconds
-
-        return True
-
-    def __le__(self, other):
-        if self.years != other.years:
-            return self.years <= other.years
-
-        if self.months != other.months:
-            return self.months <= other.months
-
-        if self.days != other.days:
-            return self.days <= other.days
-
-        if self.hours != other.hours:
-            return self.hours <= other.hours
-
-        if self.minutes != other.minutes:
-            return self.minutes <= other.minutes
-
-        if self.seconds != other.seconds:
-            return self.seconds <= other.seconds
-
-        if self.microseconds != other.microseconds:
-            return self.microseconds <= other.microseconds
-
-        return True
+        return 0
 
     def __div__(self, other):
         return self.__mul__(1/float(other))
